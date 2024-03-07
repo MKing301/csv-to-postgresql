@@ -138,82 +138,86 @@ def insert_data():
     return result
 
 
-"""
-Load 3 csv files into dataframe
-"""
+def main():
 
-logging.info(
-        'Script started that combines 3 csv files and insert data into db.')
+    logging.info(
+            'Script started that combines 3 csv files and insert data into db.'
+    )
 
-# Start timer
-start = time.perf_counter()
+    # Start timer
+    start = time.perf_counter()
 
-# Create 1st dataframe
-df1 = pd.read_csv('/path/to/1st/csv/file', index_col=False)
+    # Load 3 csv files into dataframe
+    # Create 1st dataframe
+    df1 = pd.read_csv('/path/to/1st/csv/file', index_col=False)
 
-# Create 2nd dataframe
-df2 = pd.read_csv('/path/to/2nd/csv/file', index_col=False)
+    # Create 2nd dataframe
+    df2 = pd.read_csv('/path/to/2nd/csv/file', index_col=False)
 
-# Create 3rd dataframe
-df3 = pd.read_csv('/path/to/3rd/csv/file', index_col=False)
+    # Create 3rd dataframe
+    df3 = pd.read_csv('/path/to/3rd/csv/file', index_col=False)
 
-# Combine dataframes
-frames = [df1, df2, df3]
-df = pd.concat(frames)
+    # Combine dataframes
+    frames = [df1, df2, df3]
+    df = pd.concat(frames)
 
-# Add timestamp
-df['inserted_date'] = datetime.now(tz=est)
+    # Add timestamp
+    df['inserted_date'] = datetime.now(tz=est)
 
-# resetting index
-df.reset_index(inplace=True)
+    # resetting index
+    df.reset_index(inplace=True)
 
-# Start index at 1, instead of default of 0
-df.index += 1
+    # Start index at 1, instead of default of 0
+    df.index += 1
 
-# Rename index
-df.index.names = ['id']
+    # Rename index
+    df.index.names = ['id']
 
-# Rearrange columns to match table in db (if necessary)
-df = df[
-        [
-            'col1',
-            'col2',
-            'col3',
-            'col4',
-            'col5'
+    # Rearrange columns to match table in db (if necessary)
+    df = df[
+            [
+                'col1',
+                'col2',
+                'col3',
+                'col4',
+                'col5'
+            ]
         ]
-    ]
 
-logging.info('Data collected!')
+    logging.info('Data collected!')
 
-# Store combined data as csv
-df.to_csv('/path/to/temporary/csv/file/location', header=False)
-logging.info('CSV file generated!')
+    # Store combined data as csv
+    df.to_csv('/path/to/temporary/csv/file/location', header=False)
+    logging.info('CSV file generated!')
 
-# Delete existing devices
-deletion = delete_devices()
+    # Delete existing devices
+    deletion = delete_devices()
 
-if deletion:
-    load_data = insert_data()
+    if deletion:
+        load_data = insert_data()
 
-    if load_data:
-        try:
-            # Delete temporary csv file
-            os.remove('/path/to/temporary/csv/file/location')
-            logging.info(
-                    'Temporary file deleted successfully!')
+        if load_data:
+            try:
+                # Delete temporary csv file
+                os.remove('/path/to/temporary/csv/file/location')
+                logging.info(
+                        'Temporary file deleted successfully!')
 
-            # End timer
-            end = time.perf_counter()
-            logging.info(
-                    f'Finished inserting data in {round(end-start, 2)}'
-                    'second(s)')
-        except Exception as e:
-            logging.error(
-                    'Temporary file not deleted!')
-            logging.error(f'Exception: {e}')
+                # End timer
+                end = time.perf_counter()
+                logging.info(
+                        f'Finished inserting data in {round(end-start, 2)}'
+                        'second(s)')
+            except Exception as e:
+                logging.error(
+                        'Temporary file not deleted!')
+                logging.error(f'Exception: {e}')
+        else:
+            logging.error('Unable to delete devices, so aborted process!')
+
     else:
-        logging.error('Unable to delete devices, so aborted process!')
+        logging.error('File missing!')
 
-else:
-    logging.error('File missing!')
+
+if __name__ == '__main__':
+    main()
