@@ -1,8 +1,8 @@
 """ This script is used to combine 3 csv, using Pandas dataframes, then
     load the data into an existing table in a PostgreSQL database.
 
-    NOTE: The headers in the csv file must match the columen headers in
-    your datbase table.  I clear the existing data programatically each time
+    NOTE: The headers in the csv file must match the column headers in
+    your database table.  I clear the existing data programmatically each time
     for testing purposes.
 
     History:
@@ -91,7 +91,7 @@ def delete_devices():
         logging.info('Existing records deleted!')
         cur.close()
         connection.close()
-        logging.info('Connectin to db closed!')
+        logging.info('Connection to db closed!')
 
         result = True
 
@@ -128,7 +128,7 @@ def insert_data():
         logging.info('Data inserted into db!')
         cur.close()
         connection.close()
-        logging.info('Connectin to db closed!')
+        logging.info('Connection to db closed!')
         result = True
 
     except psycopg2.Error as e:
